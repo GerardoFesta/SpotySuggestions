@@ -13,7 +13,7 @@ def getAllSongsFromCall(spotify, chiamata):
     return dati
     
 #prende in input lista di songs non formattate e ritorna un df formattato
-def songsToDf(spotify,songs):
+def songsToDf(spotify,songs,nome):
     
     
     df = pd.DataFrame(songs)
@@ -44,7 +44,7 @@ def songsToDf(spotify,songs):
                       'instrumentalness','liveness','valence','tempo','time_signature'
                         ]
     prodotto=df[select_columns]
-    prodotto.to_csv("primiDati.csv", index=FALSE)
+    prodotto.to_csv(nome, index=FALSE)
 
 
 #Per dare un peso al genere, un algo pesato sulle occorrenze? Prendiamo top songs, poi arriviamo alla lista di generi

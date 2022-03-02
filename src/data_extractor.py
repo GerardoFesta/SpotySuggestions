@@ -16,5 +16,10 @@ spotify=spotipy.Spotify(auth_manager=SpotifyOAuth(
     scope=SCOPE
 ))
 
+#Canzoni salvate dall'utente
 saved_tracks = getAllSongsFromCall(spotify, spotify.current_user_saved_tracks())
-songsToDf(spotify,saved_tracks)
+songsToDf(spotify,saved_tracks,"salvate.csv")
+
+#Canzoni più ascoltate dall'utente
+top_tracks = getAllSongsFromCall(spotify, spotify.current_user_top_tracks())
+songsToDf(spotify, top_tracks,"preferite.csv")
