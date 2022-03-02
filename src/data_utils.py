@@ -30,6 +30,7 @@ def songsToDf(songs):
     #Aggiungere parte che prende l'artist_id e lo usa per ricavare i generi e lo aggiunge qua
     df['artist_id'] = df['artists'].apply(lambda x: x[0]['id'])
     df['artist_name'] = df['artists'].apply(lambda x: x[0]['name'])
+    
     select_columns = ['id', 'name', 'popularity', 'type', 'is_local', 'explicit', 'duration_ms', 'disc_number',
                       'track_number',
                       'artist_id', 'artist_name', 'album_artist_id', 'album_artist_name',
