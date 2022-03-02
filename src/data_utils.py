@@ -41,4 +41,3 @@ def songsToDf(songs):
 #Per dare un peso al genere, un algo pesato sulle occorrenze? Prendiamo top songs, poi arriviamo alla lista di generi
 #passando per l'artista. Mettiamo tutte queste liste in una lista più grande, dove assegniamo a ogni genere un peso
 #in base alla frequenza con cui è presente
-
