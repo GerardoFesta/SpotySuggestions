@@ -13,7 +13,7 @@ def getAllSongsFromCall(spotify, chiamata):
     return dati
     
 #prende in input lista di songs non formattate e ritorna un df formattato
-def songsToDf(songs):
+def songsToDf(spotify,songs):
     
     
     df = pd.DataFrame(songs)
@@ -24,17 +24,25 @@ def songsToDf(songs):
     df['album_release_date'] = df['album'].apply(lambda x: x['release_date'])
     df['album_tracks'] = df['album'].apply(lambda x: x['total_tracks'])
     df['album_type'] = df['album'].apply(lambda x: x['type'])
-    
     df['album_artist_id'] = df['album'].apply(lambda x: x['artists'][0]['id'])
     df['album_artist_name'] = df['album'].apply(lambda x: x['artists'][0]['name'])
-    #Aggiungere parte che prende l'artist_id e lo usa per ricavare i generi e lo aggiunge qua
+    #Dati artista
     df['artist_id'] = df['artists'].apply(lambda x: x[0]['id'])
     df['artist_name'] = df['artists'].apply(lambda x: x[0]['name'])
-    
+    #Aggiunta parte che prende l''id_artista e lo usa per ricavare i generi e lo aggiunge qua 
+    df['genres'] = df['artist_id'].apply(lambda x: spotify.artist(x)['genres'])
+    #Feature audio
+    df['audio_features'] = df['id'].apply(lambda x: spotify.audio_features(x))
+    df['audio_features'] = df['audio_features'].apply(pd.Series)
+    df = df.drop('audio_features', 1).assign(**df['audio_features'].apply(pd.Series))
+
     select_columns = ['id', 'name', 'popularity', 'type', 'is_local', 'explicit', 'duration_ms', 'disc_number',
                       'track_number',
                       'artist_id', 'artist_name', 'album_artist_id', 'album_artist_name',
-                      'album_id', 'album_name', 'album_release_date', 'album_tracks', 'album_type']
+                      'album_id', 'album_name', 'album_release_date', 'album_tracks', 'album_type',
+                      'genres', 'danceability', 'energy', 'key', 'loudness','speechiness', 'acousticness',
+                      'instrumentalness','liveness','valence','tempo','time_signature'
+                        ]
     prodotto=df[select_columns]
     prodotto.to_csv("primiDati.csv", index=FALSE)
 
