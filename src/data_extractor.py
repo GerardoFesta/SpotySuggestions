@@ -1,6 +1,6 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from data_utils import getAllSongsFromCall, songsToDf, getTracksFromPlaylists
+from data_utils import getAllSongsFromCall, songsToDf, getTracksFromPlaylists, getAllArtistsDf
 
 CLIENT_ID="1a37e6452b7649b7b218d75b5be3d377"
 CLIENT_SECRET="c0f4dfea62ce47c496fcf1b3cccad4fa"
@@ -15,7 +15,6 @@ spotify=spotipy.Spotify(auth_manager=SpotifyOAuth(
     redirect_uri=REDIRECT,
     scope=SCOPE
 ))
-
 
 #Canzoni salvate dall'utente
 saved_tracks = getAllSongsFromCall(spotify, spotify.current_user_saved_tracks())
@@ -38,4 +37,15 @@ df.to_csv("Top_long.csv", index=False)
 #Prime (max 20) playlist
 df=getTracksFromPlaylists(spotify, spotify.current_user_playlists(limit=20))
 df.to_csv("Tutte_playlist.csv", index=False)
+
+#Artisti preferiti
+top_artisti=getAllArtistsDf(spotify, spotify.current_user_top_artists(time_range='short_term'))
+top_artisti.to_csv("Artisti_short.csv", index=False)
+
+top_artisti=getAllArtistsDf(spotify, spotify.current_user_top_artists(time_range='medium_term'))
+top_artisti.to_csv("Artisti_medium.csv", index=False)
+
+top_artisti=getAllArtistsDf(spotify, spotify.current_user_top_artists(time_range='long_term'))
+top_artisti.to_csv("Artisti_long.csv", index=False)
+
 print("FINE")

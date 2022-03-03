@@ -64,6 +64,22 @@ def getTracksFromPlaylists(spotify, chiamata):
     
     return songsToDf(spotify,dati)
 
+
+def getAllArtistsDf(spotify, chiamata):
+    
+    risultati = chiamata
+    #print(risultati)
+    #risultati = risultati["artists"]
+    dati=risultati["items"]
+    while risultati['next']:
+        risultati = spotify.next(risultati)
+        dati.extend(risultati['items'])
+    df = pd.DataFrame(dati)
+    return df[["id","uri","type", "name", "genres"]]
+
+
+
+
 #Per dare un peso al genere, un algo pesato sulle occorrenze? Prendiamo top songs, poi arriviamo alla lista di generi
 #passando per l'artista. Mettiamo tutte queste liste in una lista più grande, dove assegniamo a ogni genere un peso
 #in base alla frequenza con cui è presente
