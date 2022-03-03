@@ -78,6 +78,16 @@ def getAllArtistsDf(spotify, chiamata):
     return df[["id","uri","type", "name", "genres"]]
 
 
+def getRecommendations(spotify, songs):
+
+    dati=[]
+    for song in songs:
+        rec = spotify.recommendations(seed_tracks=[song])
+        dati.extend(rec['tracks'])
+    return songsToDf(spotify,dati)
+
+
+
 
 
 #Per dare un peso al genere, un algo pesato sulle occorrenze? Prendiamo top songs, poi arriviamo alla lista di generi
