@@ -1,4 +1,3 @@
-from pickle import FALSE
 import pandas as pd
 
 
@@ -13,12 +12,14 @@ def getAllSongsFromCall(spotify, chiamata):
     return dati
     
 #prende in input lista di songs non formattate e ritorna un df formattato
-def songsToDf(spotify,songs,nome):
-    
+def songsToDf(spotify,songs):
     
     df = pd.DataFrame(songs)
     if 'track' in df.columns.tolist():
         df = df.drop('track', 1).assign(**df['track'].apply(pd.Series))
+       
+    
+    
     df['album_id'] = df['album'].apply(lambda x: x['id'])
     df['album_name'] = df['album'].apply(lambda x: x['name'])
     df['album_release_date'] = df['album'].apply(lambda x: x['release_date'])
@@ -26,6 +27,7 @@ def songsToDf(spotify,songs,nome):
     df['album_type'] = df['album'].apply(lambda x: x['type'])
     df['album_artist_id'] = df['album'].apply(lambda x: x['artists'][0]['id'])
     df['album_artist_name'] = df['album'].apply(lambda x: x['artists'][0]['name'])
+    
     #Dati artista
     df['artist_id'] = df['artists'].apply(lambda x: x[0]['id'])
     df['artist_name'] = df['artists'].apply(lambda x: x[0]['name'])
@@ -44,8 +46,23 @@ def songsToDf(spotify,songs,nome):
                       'instrumentalness','liveness','valence','tempo','time_signature'
                         ]
     prodotto=df[select_columns]
-    prodotto.to_csv(nome, index=FALSE)
+    return prodotto
 
+def getTracksFromPlaylists(spotify, chiamata):
+
+    playlists = chiamata
+    tutte_playlist = playlists['items']
+    dati=[]
+   
+    for playlist in tutte_playlist:
+        saved_tracks = spotify.playlist(playlist['id'], fields="tracks, next")
+        results = saved_tracks['tracks']
+        dati.extend(results['items'])
+        while results['next']:
+            results = spotify.next(results)
+            dati.extend(results['items'])
+    
+    return songsToDf(spotify,dati)
 
 #Per dare un peso al genere, un algo pesato sulle occorrenze? Prendiamo top songs, poi arriviamo alla lista di generi
 #passando per l'artista. Mettiamo tutte queste liste in una lista più grande, dove assegniamo a ogni genere un peso
