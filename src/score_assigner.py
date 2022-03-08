@@ -2,6 +2,22 @@ import pandas as pd
 import ast
 import numpy as np
 
+SC_GENRE1=1.8
+SC_GENRE2=1.6
+SC_GENRE3=1.3
+SC_GENRE4=1.1
+SC_POPULARITY1=1.4
+SC_POPULARITY2=1.3
+SC_POPULARITY3=1.2
+SC_POPULARITY4=1.1
+SC_ARTIST1=2
+SC_ARTIST2=1.8
+SC_ARTIST3=1.5
+SC_ARTIST4=1.4
+SC_ARTIST5=1.3
+SC_ARTIST6=1.2
+SC_ARTIST7=1.1
+
 #BISOGNA PULIRE LE " PRIMA DI []
 #"[""canzone d'autore"", 'classic italian pop', 'folk rock italiano', 'italian adult pop']" DIVENTA
 #["canzone d'autore", 'classic italian pop', 'folk rock italiano', 'italian adult pop']
@@ -15,7 +31,7 @@ def generiPreferiti(tuttigeneri):
                 generi[genere]=1
             else:
                 generi[genere]+=1
-    print(generi)
+    return generi
 
 #Nella chiamata passare a listapop listapop=dati['popularity'].tolist()
 def popolaritaMedia(listapop):
@@ -27,7 +43,7 @@ def popolaritaMedia(listapop):
     print(round(tot/i))
     return round(tot/i)
 
-def popolatiyaFasce(listapop):
+def popolaritaFasce(listapop):
     dict={'1-20':0,'21-40':0,'41-60':0,'61-80':0,'81-100':0}
     for pop in listapop:
         if(pop>=1 and pop<=20):
@@ -44,6 +60,7 @@ def popolatiyaFasce(listapop):
                     else:
                         if(pop>=81 and pop<=100):
                             dict['81-100']+=1
+    return dict
 
 
 
@@ -127,6 +144,71 @@ df=pd.DataFrame(dati, columns=['id','uri','type','name','genres'])
 generiPreferiti(df['genres'].tolist())
 '''
 
+def creaPunteggioGenere(lista):
+    punteggio={}
+    generiFinali=(sorted(lista.items(),key=lambda x: x[1],reverse=True))
+    for genere in generiFinali:
+        if(genere[1]>30):
+            punteggio[genere[0]]=SC_GENRE1
+        else:
+            if(genere[1]>20 and genere[1]<=30):
+                punteggio[genere[0]]=SC_GENRE2
+            else:
+                if(genere[1]>10 and genere[1]<=20):
+                    punteggio[genere[0]]=SC_GENRE3
+                else:
+                    if(genere[1]>0 and genere[1]<=10):
+                        punteggio[genere[0]]=SC_GENRE4
+    return punteggio
+
+
+
+def creaPunteggioPopolarita(popolarita):
+    punteggio={}
+    popolaritaFinale=(sorted(popolarita.items(),key=lambda x:x[1],reverse=True))
+    for popolarita in popolaritaFinale:
+        if(popolarita[1]>30):
+            punteggio[popolarita[0]]=SC_POPULARITY1
+        else:
+            if(popolarita[1]>20 and popolarita[1]<=30):
+                punteggio[popolarita[0]]=SC_POPULARITY2
+            else:
+                if(popolarita[1]>10 and popolarita[1]<=20):
+                    punteggio[popolarita[0]]=SC_POPULARITY3
+                else:
+                    if(popolarita[1]>0 and popolarita[1]<=10):
+                        punteggio[popolarita[0]]=SC_POPULARITY4
+    return punteggio
+
+def creaPunteggioArtisti(nameArtisti):
+    punteggio={}
+    i=0
+    for name in nameArtisti:
+        i+=1
+        if(i>=0 and i<=3):
+            punteggio[name]=SC_ARTIST1
+        else:
+            if(i>3 and i<=10):
+                punteggio[name]=SC_ARTIST2
+            else:
+                if(i>10 and i<=20):
+                    punteggio[name]=SC_ARTIST3
+                else:
+                    if(i>20 and i<=30):
+                        punteggio[name]=SC_ARTIST4
+                    else:
+                        if(i>30 and i<=40):
+                            punteggio[name]=SC_ARTIST5
+                        else:
+                            if(i>40 and i<=50):
+                                punteggio[name]=SC_ARTIST6
+                            else:
+                                if(i>50 and i<=60):
+                                    punteggio[name ]=SC_ARTIST7
+
+    return punteggio
+
+
 def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
     score=1
     pop=song['popularity']
@@ -142,16 +224,16 @@ def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
                 fascia='61-80'
             else:
                 fascia='81-100'
-    popScore=punteggiPop[fascia]
+    popScore=punteggiPop.get(fascia)
     if(popScore==None):
         popScore=1
-    artScore=punteggiArtista[song['artist_name']]
+    artScore=punteggiArtista.get(song['artist_name'])
     if(artScore==None):
         artScore=1
     listaGeneri=song['genres']
     genreScore=1
     for genere in listaGeneri:
-        if(not punteggiGeneri[genere]==None):
+        if(not punteggiGeneri.get(genere)==None):
             if(genreScore==1):
                 genreScore=punteggiGeneri[genere]
             else:
@@ -160,9 +242,11 @@ def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
     rng = np.random.default_rng()
     rfloat = rng.random()
     score=moltProvenienza*(genreScore+popScore+artScore)*rfloat
-    return score
+    
+    return round(score,3)
 
 def dataSongsClean(df):
+    df = df[df.genres != '[]']
     df['genres'] = df['genres'].str.replace('"\[','\[')
     df['genres'] = df['genres'].str.replace('\]"','\]')
     df['genres']=df['genres'].str.replace('""','"')
@@ -175,16 +259,27 @@ def dataPreparation():
     SALVATE_X=1.4
     PREFERITE_X=1.5
 
-    punteggiPop=[]#mock chiamata
-    punteggiGeneri=[]#mock chiamata
-    punteggiArtista=[]#mock chiamata
+
+    dfArtisti=pd.read_csv('Artisti_long.csv')
+    listaArtisti=dfArtisti['name'].tolist()
+    punteggiArtista=creaPunteggioArtisti(listaArtisti)
+
+    preferitedf=pd.read_csv('top_medium.csv')
+    preferitedf=dataSongsClean(preferitedf) 
+
+    fascepopolarita=popolaritaFasce(preferitedf['popularity'].tolist())
+    punteggiPop=creaPunteggioPopolarita(fascepopolarita)
+
+    generi=generiPreferiti(preferitedf['genres'].tolist())
+    punteggiGeneri=creaPunteggioGenere(generi)
+    
 
     playlistdf=pd.read_csv('Tutte_playlist.csv')
     playlistdf=dataSongsClean(playlistdf)
     playlistdf['score']=0
 
     for idx in playlistdf.index:
-        score=evalScore(PLAYLIST_X, punteggiPop,punteggiGeneri,punteggiArtista,playlistdf.iloc[idx])
+        score=evalScore(PLAYLIST_X, punteggiPop,punteggiGeneri,punteggiArtista,playlistdf.loc[idx])
         playlistdf.at[idx, 'score']=score
     
     salvatedf=pd.read_csv('salvate.csv')
@@ -192,20 +287,19 @@ def dataPreparation():
     salvatedf['score']=0
 
     for idx in salvatedf.index:
-        score=evalScore(SALVATE_X, punteggiPop,punteggiGeneri,punteggiArtista,salvatedf.iloc[idx])
+        score=evalScore(SALVATE_X, punteggiPop,punteggiGeneri,punteggiArtista,salvatedf.loc[idx])
         salvatedf.at[idx, 'score']=score
 
-    preferitedf=pd.read_csv('top_medium.csv')
-    preferitedf=dataSongsClean(preferitedf)
+    
     preferitedf['score']=0
 
-    for idx in playlistdf.index:
-        score=evalScore(PREFERITE_X, punteggiPop,punteggiGeneri,punteggiArtista,preferitedf.iloc[idx])
+    for idx in preferitedf.index:
+        score=evalScore(PREFERITE_X, punteggiPop,punteggiGeneri,punteggiArtista,preferitedf.loc[idx])
         preferitedf.at[idx, 'score']=score
     
     finaldf=pd.concat([playlistdf,preferitedf,salvatedf])
     finaldf.sort_values('score', ascending=False).drop_duplicates('id').sort_index()
-    finaldf.tocsv("ProvaScore.csv")
+    finaldf.to_csv("ProvaScore.csv")
 
 dataPreparation()
     
