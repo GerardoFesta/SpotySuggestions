@@ -1,4 +1,6 @@
 import pandas as pd
+import ast
+import numpy as np
 
 #BISOGNA PULIRE LE " PRIMA DI []
 #"[""canzone d'autore"", 'classic italian pop', 'folk rock italiano', 'italian adult pop']" DIVENTA
@@ -97,7 +99,7 @@ def mediaAudioFeautures(l_danceability,l_energy,l_key,l_loudness,l_speechiness,l
     print(dict)
     return dict
     
-
+'''
 linea1=['3sSi7rkknbzSNc02yac6Tz','Pezzi di vetro',45,'audio_features',False,False,'187733','1','2','16FJYC4FqKhZXiXIzMI4ul','Francesco De Gregori','16FJYC4FqKhZXiXIzMI4ul','Francesco De Gregori','5c1TMPBpOc4qJebACcOm7K','Rimmel','1975-11-27','9','album',["canzone d'autore", 'classic italian pop', 'folk rock italiano', 'italian adult pop'],0.563,0.113,2,-19.92,0.0583,0.935,0.000278,0.106,0.391,138.72,4]
 linea2=['0ioTTk5l0Zz7Oh48qEocgj','KEEP IT UP',79,'audio_features',False,False,'183000','1','1','7pbDxGE6nQSZVfiFdq9lOL','Rex Orange County','7pbDxGE6nQSZVfiFdq9lOL','Rex Orange County','36IWMZ2DOpKbLb0IrzWc4U','KEEP IT UP','2022-01-26','1','album',['bedroom pop'',' 'pop'],0.708,0.477,8,-7.297,0.0565,0.292,1.75e-06,0.255,0.733,149.929,4]
 linea3=['0sTlGEld0h8kIPZaKDYUf4','Notion',91,'audio_features',False,False,'195121','1','1','1QfpRUtH14JLoY6F6AYmwt','The Rare Occasions','1QfpRUtH14JLoY6F6AYmwt','The Rare Occasions','4Uf8BVznefnd2xZm2nRFUx','Notion','2021-12-02','1','album',['la indie', "canzone d'autore"],0.309,0.883,9,-3.825,0.0808,0.0673,0.00111,0.0849,0.312,159.488,4]
@@ -123,4 +125,89 @@ dati=[linea11, linea22, linea33]
 
 df=pd.DataFrame(dati, columns=['id','uri','type','name','genres'])
 generiPreferiti(df['genres'].tolist())
+'''
+
+def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
+    score=1
+    pop=song['popularity']
+    if(pop<=20):
+        fascia='1-20'
+    if(pop>=21 and pop<=40):
+        fascia='21-40'
+    else:
+        if(pop<=61):
+            fascia='41-60'
+        else:
+            if(pop<=80):
+                fascia='61-80'
+            else:
+                fascia='81-100'
+    popScore=punteggiPop[fascia]
+    if(popScore==None):
+        popScore=1
+    artScore=punteggiArtista[song['artist_name']]
+    if(artScore==None):
+        artScore=1
+    listaGeneri=song['genres']
+    genreScore=1
+    for genere in listaGeneri:
+        if(not punteggiGeneri[genere]==None):
+            if(genreScore==1):
+                genreScore=punteggiGeneri[genere]
+            else:
+                genreScore+=punteggiGeneri[genere]
+
+    rng = np.random.default_rng()
+    rfloat = rng.random()
+    score=moltProvenienza*(genreScore+popScore+artScore)*rfloat
+    return score
+
+def dataSongsClean(df):
+    df['genres'] = df['genres'].str.replace('"\[','\[')
+    df['genres'] = df['genres'].str.replace('\]"','\]')
+    df['genres']=df['genres'].str.replace('""','"')
+    df['genres']=df['genres'].apply(lambda x:ast.literal_eval(x))
+    df = df[df.popularity != 0]
+    return df
+    
+def dataPreparation():
+    PLAYLIST_X=1.2
+    SALVATE_X=1.4
+    PREFERITE_X=1.5
+
+    punteggiPop=[]#mock chiamata
+    punteggiGeneri=[]#mock chiamata
+    punteggiArtista=[]#mock chiamata
+
+    playlistdf=pd.read_csv('Tutte_playlist.csv')
+    playlistdf=dataSongsClean(playlistdf)
+    playlistdf['score']=0
+
+    for idx in playlistdf.index:
+        score=evalScore(PLAYLIST_X, punteggiPop,punteggiGeneri,punteggiArtista,playlistdf.iloc[idx])
+        playlistdf.at[idx, 'score']=score
+    
+    salvatedf=pd.read_csv('salvate.csv')
+    salvatedf=dataSongsClean(salvatedf)
+    salvatedf['score']=0
+
+    for idx in salvatedf.index:
+        score=evalScore(SALVATE_X, punteggiPop,punteggiGeneri,punteggiArtista,salvatedf.iloc[idx])
+        salvatedf.at[idx, 'score']=score
+
+    preferitedf=pd.read_csv('top_medium.csv')
+    preferitedf=dataSongsClean(preferitedf)
+    preferitedf['score']=0
+
+    for idx in playlistdf.index:
+        score=evalScore(PREFERITE_X, punteggiPop,punteggiGeneri,punteggiArtista,preferitedf.iloc[idx])
+        preferitedf.at[idx, 'score']=score
+    
+    finaldf=pd.concat([playlistdf,preferitedf,salvatedf])
+    finaldf.sort_values('score', ascending=False).drop_duplicates('id').sort_index()
+    finaldf.tocsv("ProvaScore.csv")
+
+dataPreparation()
+    
+
 
