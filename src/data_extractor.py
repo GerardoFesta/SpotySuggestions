@@ -1,9 +1,13 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from data_utils import getAllSongsFromCall, songsToDf, getTracksFromPlaylists, getAllArtistsDf,getRecommendations
+import os
+from dotenv import load_dotenv
 
-CLIENT_ID="1a37e6452b7649b7b218d75b5be3d377"
-CLIENT_SECRET="c0f4dfea62ce47c496fcf1b3cccad4fa"
+load_dotenv()
+
+CLIENT_ID=os.getenv("CLIENT_ID")
+CLIENT_SECRET=os.getenv("CLIENT_SECRET")
 SCOPE=["user-library-read","user-read-playback-position","user-top-read","user-read-recently-played","user-follow-read","playlist-read-private"]
 REDIRECT="http://localhost:8080"
 
@@ -52,5 +56,5 @@ top_artisti.to_csv("Artisti_long.csv", index=False)
 
 RecSongs= getRecommendations(spotify,dfrec['id'].tolist())
 RecSongs.to_csv("Rec_songs.csv", index=False)
-print("FINE")
 '''
+print("FINE")
