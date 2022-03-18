@@ -1,8 +1,7 @@
-from audioop import reverse
-from itertools import count
-from operator import invert
 import pandas as pd
-import ast 
+import ast
+import numpy as np
+
 SC_GENRE1=1.8
 SC_GENRE2=1.6
 SC_GENRE3=1.3
@@ -18,9 +17,6 @@ SC_ARTIST4=1.4
 SC_ARTIST5=1.3
 SC_ARTIST6=1.2
 SC_ARTIST7=1.1
-#BISOGNA PULIRE LE " PRIMA DI []
-#"[""canzone d'autore"", 'classic italian pop', 'folk rock italiano', 'italian adult pop']" DIVENTA
-#["canzone d'autore", 'classic italian pop', 'folk rock italiano', 'italian adult pop']
 
 #Nella chiamata passare a tuttigeneri tuttigeneri=dati['genres'].tolist()
 def generiPreferiti(tuttigeneri):
@@ -32,7 +28,6 @@ def generiPreferiti(tuttigeneri):
             else:
                 generi[genere]+=1
     return generi
-
 
 #Nella chiamata passare a listapop listapop=dati['popularity'].tolist()
 def popolaritaMedia(listapop):
@@ -78,9 +73,45 @@ def raccoltaAnni(listaAnni):
             anni[anno]=1
         else:
             anni[anno]+=1
-    return anni
+    print(anni)
 
 
+'''
+#Probabilmente inutile... Ha senso fare una media di valori così? Servirebbe clustering forse
+def mediaAudioFeautures(l_danceability,l_energy,l_key,l_loudness,l_speechiness,l_acousticness,l_instrumentalness,l_liveness,l_valence,l_tempo,l_time_signature):
+    dict={'m_danceability':0,'m_energy':0 ,'m_key':0,'m_loudness':0,'m_speechiness':0,'m_acousticness':0,'m_instrumentalness':0,'m_liveness':0,'m_valence':0,'m_tempo':0,'m_time_signature':0}
+    i=0
+    
+    while i<len(l_danceability):
+        dict['m_danceability']+=l_danceability[i]
+        dict['m_energy']+=l_energy[i]
+        dict['m_key']+=l_key[i]
+        dict['m_loudness']+=l_loudness[i]
+        dict['m_speechiness']+=l_speechiness[i]
+        dict['m_acousticness']+=l_acousticness[i]
+        dict['m_instrumentalness']+=l_instrumentalness[i]
+        dict['m_liveness']+=l_liveness[i]
+        dict['m_valence']+=l_valence[i]
+        dict['m_tempo']+=l_tempo[i]
+        dict['m_time_signature']+=l_time_signature[i]
+        
+        
+        i+=1
+
+    dict['m_danceability']=dict['m_danceability']/len(l_danceability)
+    dict['m_energy']=dict['m_energy']/len(l_energy)
+    dict['m_key']=dict['m_key']/len(l_key)
+    dict['m_loudness']=dict['m_loudness']/len(l_loudness)
+    dict['m_speechiness']=dict['m_speechiness']/len(l_speechiness)
+    dict['m_acousticness']=dict['m_acousticness']/len(l_acousticness)
+    dict['m_instrumentalness']=dict['m_instrumentalness']/len(l_instrumentalness)
+    dict['m_liveness']=dict['m_liveness']/len(l_liveness)
+    dict['m_valence']=dict['m_valence']/len(l_valence)
+    dict['m_tempo']=dict['m_tempo']/len(l_tempo)
+    dict['m_time_signature']=dict['m_time_signature']/len(l_time_signature)
+    print(dict)
+    return dict
+'''
 def creaPunteggioGenere(lista):
     punteggio={}
     generiFinali=(sorted(lista.items(),key=lambda x: x[1],reverse=True))
@@ -145,63 +176,17 @@ def creaPunteggioArtisti(nameArtisti):
 
     return punteggio
 
-
-#Probabilmente inutile... Ha senso fare una media di valori così? Servirebbe clustering forse
-def mediaAudioFeautures(l_danceability,l_energy,l_key,l_loudness,l_speechiness,l_acousticness,l_instrumentalness,l_liveness,l_valence,l_tempo,l_time_signature):
-    dict={'m_danceability':0,'m_energy':0 ,'m_key':0,'m_loudness':0,'m_speechiness':0,'m_acousticness':0,'m_instrumentalness':0,'m_liveness':0,'m_valence':0,'m_tempo':0,'m_time_signature':0}
-    i=0
+def getSingleGenre(song):
+    macro={"rock":0, "pop":0, "metal":0, "rap":0, "indie":0, "jazz":0, "electro":0, "house":0, "country":0, "techno":0, "classic":0, "blues":0, "r&b":0, "trap":0, "dance":0} 
+    listaGeneri=song['genres']
     
-    while i<len(l_danceability):
-        dict['m_danceability']+=l_danceability[i]
-        dict['m_energy']+=l_energy[i]
-        dict['m_key']+=l_key[i]
-        dict['m_loudness']+=l_loudness[i]
-        dict['m_speechiness']+=l_speechiness[i]
-        dict['m_acousticness']+=l_acousticness[i]
-        dict['m_instrumentalness']+=l_instrumentalness[i]
-        dict['m_liveness']+=l_liveness[i]
-        dict['m_valence']+=l_valence[i]
-        dict['m_tempo']+=l_tempo[i]
-        dict['m_time_signature']+=l_time_signature[i]
-        
-        
-        i+=1
 
-    dict['m_danceability']=dict['m_danceability']/len(l_danceability)
-    dict['m_energy']=dict['m_energy']/len(l_energy)
-    dict['m_key']=dict['m_key']/len(l_key)
-    dict['m_loudness']=dict['m_loudness']/len(l_loudness)
-    dict['m_speechiness']=dict['m_speechiness']/len(l_speechiness)
-    dict['m_acousticness']=dict['m_acousticness']/len(l_acousticness)
-    dict['m_instrumentalness']=dict['m_instrumentalness']/len(l_instrumentalness)
-    dict['m_liveness']=dict['m_liveness']/len(l_liveness)
-    dict['m_valence']=dict['m_valence']/len(l_valence)
-    dict['m_tempo']=dict['m_tempo']/len(l_tempo)
-    dict['m_time_signature']=dict['m_time_signature']/len(l_time_signature)
-    print(dict)
-    return dict
+    for genere in listaGeneri:
+        for chiave in macro:
+            if chiave in genere:
+                macro[chiave]+=1
+    maxvalue=max(macro, key=macro.get)
+    return maxvalue
 
 
 
-
-
-listaArtisti=pd.read_csv('Artisti_long.csv')
-nameArtisti=listaArtisti['name'].tolist()
-print(nameArtisti)
-prova=pd.read_csv('C:/Users/carmi/Desktop/FIA/SpotySuggestions/preferite.csv')
-popolarita=popolaritaFasce(prova['popularity'].tolist())
-#print(popolarita)
-prova['genres'] = prova['genres'].str.replace('"','')
-prova['genres']=prova['genres'].str.replace('""','"')
-prova['genres']=prova['genres'].apply(lambda x:ast.literal_eval(x))
-#print(prova)
-lista=generiPreferiti(prova['genres'].tolist())
-#print(sorted(lista,key=lista.get))
-provaRisultatiGeneri=creaPunteggioGenere(lista)
-provaRisultatiPopolarita=creaPunteggioPopolarita(popolarita)
-provaRisultatiArtista=creaPunteggioArtisti(nameArtisti)
-print(provaRisultatiArtista)
-
-#print(provaRisultatiPopolarita)
-
-#print(provaRisultatiGeneri)

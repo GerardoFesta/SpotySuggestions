@@ -18,7 +18,13 @@ def songsToDf(spotify,songs):
     if 'track' in df.columns.tolist():
         df = df.drop('track', 1).assign(**df['track'].apply(pd.Series))
        
-    
+    print(len(df.index))
+    #elimina eventuali righe vuote   
+    nan_value = float("NaN")
+    df['album'].replace("", nan_value, inplace=True)
+    df.dropna(subset = ["album"], inplace=True)
+    print(len(df.index))
+
     
     df['album_id'] = df['album'].apply(lambda x: x['id'])
     df['album_name'] = df['album'].apply(lambda x: x['name'])
