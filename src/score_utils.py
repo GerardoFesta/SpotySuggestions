@@ -175,3 +175,30 @@ def creaPunteggioArtisti(nameArtisti):
                                     punteggio[name ]=SC_ARTIST7
 
     return punteggio
+
+def getSingleGenre(song):
+    macro={"rock":0, "pop":0, "metal":0, "rap":0, "indie":0, "jazz":0, "electro":0, "house":0, "country":0, "techno":0, "classic":0, "blues":0, "r&b":0, "trap":0, "dance":0} 
+    listaGeneri=song['genres']
+    
+
+    for genere in listaGeneri:
+        for chiave in macro:
+            if chiave in genere:
+                macro[chiave]+=1
+    maxvalue=max(macro, key=macro.get)
+    return maxvalue
+
+#test singleGenresAssigner 
+df=pd.read_csv("Top_medium.csv")
+df = df[df.genres != '[]']
+df['genres'] = df['genres'].str.replace('"\[','\[')
+df['genres'] = df['genres'].str.replace('\]"','\]')
+df['genres']=df['genres'].str.replace('""','"')
+df['genres']=df['genres'].apply(lambda x:ast.literal_eval(x))
+df = df[df.popularity != 0]
+df['genere']=""
+for idx in df.index:
+    genere=singleGenresAssigner(df.loc[idx])
+    df.at[idx, "genere"]=genere
+df.to_csv("ProvaGenere.csv", index=False) 
+
