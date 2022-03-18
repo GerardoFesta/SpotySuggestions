@@ -76,7 +76,7 @@ def raccoltaAnni(listaAnni):
     print(anni)
 
 
-
+'''
 #Probabilmente inutile... Ha senso fare una media di valori così? Servirebbe clustering forse
 def mediaAudioFeautures(l_danceability,l_energy,l_key,l_loudness,l_speechiness,l_acousticness,l_instrumentalness,l_liveness,l_valence,l_tempo,l_time_signature):
     dict={'m_danceability':0,'m_energy':0 ,'m_key':0,'m_loudness':0,'m_speechiness':0,'m_acousticness':0,'m_instrumentalness':0,'m_liveness':0,'m_valence':0,'m_tempo':0,'m_time_signature':0}
@@ -111,7 +111,7 @@ def mediaAudioFeautures(l_danceability,l_energy,l_key,l_loudness,l_speechiness,l
     dict['m_time_signature']=dict['m_time_signature']/len(l_time_signature)
     print(dict)
     return dict
-
+'''
 def creaPunteggioGenere(lista):
     punteggio={}
     generiFinali=(sorted(lista.items(),key=lambda x: x[1],reverse=True))

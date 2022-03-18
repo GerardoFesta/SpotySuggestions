@@ -1,6 +1,7 @@
 import pandas as pd
 import ast
 import numpy as np
+import random
 from score_utils import creaPunteggioArtisti, popolaritaFasce, creaPunteggioPopolarita, generiPreferiti, creaPunteggioGenere
 
 
@@ -33,16 +34,20 @@ def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
         artScore=1
     listaGeneri=song['genres']
     genreScore=1
+
+    accumulatore=0
     for genere in listaGeneri:
         if(not punteggiGeneri.get(genere)==None):
             if(genreScore==1):
                 genreScore=punteggiGeneri[genere]
             else:
-                genreScore+=punteggiGeneri[genere]
-
-    rng = np.random.default_rng()
-    rfloat = rng.random()
-    score=moltProvenienza*(genreScore+popScore+artScore)*rfloat
+                temp=genreScore
+                genreScore=max(genreScore, punteggiGeneri[genere])
+                accumulatore+=random.uniform(0,0.2)
+    genreScore+=accumulatore
+                
+    rfloat=random.uniform(-1,1)
+    score=moltProvenienza*(genreScore+popScore+artScore)+rfloat
     
     return round(score,3)
 
