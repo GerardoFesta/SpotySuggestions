@@ -188,17 +188,5 @@ def getSingleGenre(song):
     maxvalue=max(macro, key=macro.get)
     return maxvalue
 
-#test singleGenresAssigner 
-df=pd.read_csv("Top_medium.csv")
-df = df[df.genres != '[]']
-df['genres'] = df['genres'].str.replace('"\[','\[')
-df['genres'] = df['genres'].str.replace('\]"','\]')
-df['genres']=df['genres'].str.replace('""','"')
-df['genres']=df['genres'].apply(lambda x:ast.literal_eval(x))
-df = df[df.popularity != 0]
-df['genere']=""
-for idx in df.index:
-    genere=singleGenresAssigner(df.loc[idx])
-    df.at[idx, "genere"]=genere
-df.to_csv("ProvaGenere.csv", index=False) 
+
 
