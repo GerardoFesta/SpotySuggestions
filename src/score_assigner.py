@@ -98,7 +98,7 @@ def dataPreparation():
         preferitedf.at[idx, 'score']=score
     
     finaldf=pd.concat([playlistdf,preferitedf,salvatedf], ignore_index=True)
-    finaldf.sort_values('score', ascending=False).drop_duplicates('id').sort_index()
+    finaldf=finaldf.sort_values('score', ascending=False).drop_duplicates(subset=['id'], inplace=False)
 
     finaldf['TopArtista']=0
     for idx in finaldf.index:
