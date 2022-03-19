@@ -190,3 +190,31 @@ def getSingleGenre(song):
 
 
 
+def dataSongsClean(df):
+    df = df[df.genres != '[]']
+    df['genres'] = df['genres'].str.replace('"\[','\[')
+    df['genres'] = df['genres'].str.replace('\]"','\]')
+    df['genres']=df['genres'].str.replace('""','"')
+    df['genres']=df['genres'].apply(lambda x:ast.literal_eval(x))
+    df = df[df.popularity != 0]
+    return df
+
+
+
+def assignSingleGenre(fulldf):
+    fulldf["genere"]=""
+    for idx in fulldf.index:
+        genere=getSingleGenre(fulldf.loc[idx])
+        fulldf.at[idx,"genere"]=genere
+    
+    return fulldf
+
+def one_to_all_fav_artists(fulldf,dict_artisti):
+    for idx in fulldf.index:
+        artista=fulldf.loc[idx]['artist_name']
+        if(not dict_artisti.get(artista)==None):
+            fulldf.at[idx, 'TopArtista']=1
+    return fulldf
+
+
+

@@ -2,7 +2,7 @@ import pandas as pd
 import ast
 import numpy as np
 import random
-from score_utils import creaPunteggioArtisti, popolaritaFasce, creaPunteggioPopolarita, generiPreferiti, creaPunteggioGenere
+from score_utils import creaPunteggioArtisti, popolaritaFasce, creaPunteggioPopolarita, generiPreferiti, creaPunteggioGenere, dataSongsClean
 
 
 
@@ -51,14 +51,7 @@ def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
     
     return round(score,3)
 
-def dataSongsClean(df):
-    df = df[df.genres != '[]']
-    df['genres'] = df['genres'].str.replace('"\[','\[')
-    df['genres'] = df['genres'].str.replace('\]"','\]')
-    df['genres']=df['genres'].str.replace('""','"')
-    df['genres']=df['genres'].apply(lambda x:ast.literal_eval(x))
-    df = df[df.popularity != 0]
-    return df
+
     
 def dataPreparation():
     PLAYLIST_X=1.2

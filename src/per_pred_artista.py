@@ -1,24 +1,13 @@
-from score_assigner import dataPreparation, getSingleGenre
+from score_assigner import dataPreparation
+from score_utils import getSingleGenre, dataSongsClean, assignSingleGenre, one_to_all_fav_artists
 import pandas as pd
 
-def assignSingleGenre(fulldf):
-    fulldf["genere"]=""
-    for idx in fulldf.index:
-        genere=getSingleGenre(fulldf.loc[idx])
-        fulldf.at[idx,"genere"]=genere
-    
-    return fulldf
 
-def one_to_all_fav_artists(fulldf,dict_artisti):
-    for idx in fulldf.index:
-        artista=fulldf.loc[idx]['artist_name']
-        if(not dict_artisti.get(artista)==None):
-            fulldf.at[idx, 'TopArtista']=1
-    return fulldf
 
 
 #dataPreparation()
 fulldf=pd.read_csv("ProvaScore.csv")
+fulldf=dataSongsClean(fulldf)
 art_short_df=pd.read_csv("Artisti_short.csv")
 art_medium_df=pd.read_csv("Artisti_medium.csv")
 art_long_df=pd.read_csv("Artisti_long.csv")
@@ -52,7 +41,7 @@ for artista in tuttiartisti_df['name'].tolist() :
 
 
 fulldf=assignSingleGenre(fulldf)
-fulldf=one_to_all_fav_artists(fulldf)
+fulldf=one_to_all_fav_artists(fulldf,dict_artisti)
 fulldf.to_csv("READY_ARTISTI_GENERI.csv", index=False)
 #tuttiartisti_df.to_csv("LISTA_COMPLETA_ARTISTI.csv", index=False)
 #one_to_all_fav_artists(fulldf)
