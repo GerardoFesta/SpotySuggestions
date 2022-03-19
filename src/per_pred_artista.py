@@ -1,21 +1,8 @@
-from score_assigner import dataPreparation, dataSongsClean
-from score_utils import getSingleGenre
+from score_assigner import dataPreparation
+from score_utils import getSingleGenre, dataSongsClean, assignSingleGenre, one_to_all_fav_artists
 import pandas as pd
 
-def assignSingleGenre(fulldf):
-    fulldf["genere"]=""
-    for idx in fulldf.index:
-        genere=getSingleGenre(fulldf.loc[idx])
-        fulldf.at[idx,"genere"]=genere
-    
-    return fulldf
 
-def one_to_all_fav_artists(fulldf,dict_artisti):
-    for idx in fulldf.index:
-        artista=fulldf.loc[idx]['artist_name']
-        if(not dict_artisti.get(artista)==None):
-            fulldf.at[idx, 'TopArtista']=1
-    return fulldf
 
 
 #dataPreparation()
