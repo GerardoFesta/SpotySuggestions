@@ -192,6 +192,10 @@ def getSingleGenre(song):
 
 def dataSongsClean(df):
     df = df[df.genres != '[]']
+    df = df[df.energy != np.NaN]
+    df = df[df.energy != ""]
+    df = df[df.id != np.NaN]
+    df = df[df.id != ""]
     df['genres'] = df['genres'].str.replace('"\[','\[')
     df['genres'] = df['genres'].str.replace('\]"','\]')
     df['genres']=df['genres'].str.replace('""','"')
