@@ -34,7 +34,7 @@ top_df = top_df.rename(columns={'artist_id': 'id', 'artist_name': 'name'})
 
 tuttiartisti_df=pd.concat([top_df,art_df], ignore_index=True)
 
-tuttiartisti_df.drop_duplicates('id',keep='first', inplace=True)
+tuttiartisti_df.drop_duplicates(subset=['id'],keep='first', inplace=True)
 
 for artista in tuttiartisti_df['name'].tolist() :
     dict_artisti[artista]=1

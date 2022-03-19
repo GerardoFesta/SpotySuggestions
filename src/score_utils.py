@@ -197,6 +197,7 @@ def dataSongsClean(df):
     df['genres']=df['genres'].str.replace('""','"')
     df['genres']=df['genres'].apply(lambda x:ast.literal_eval(x))
     df = df[df.popularity != 0]
+    df['album_release_date']=df['album_release_date'].astype('str')
     return df
 
 
@@ -215,6 +216,15 @@ def one_to_all_fav_artists(fulldf,dict_artisti):
         if(not dict_artisti.get(artista)==None):
             fulldf.at[idx, 'TopArtista']=1
     return fulldf
-
-
+#Prende il 30% delle canzoni con punteggio più alto
+def topScoreRow(df):
+    df['topScore']=0
+    count=len(df.index)
+    percentuale=(count*30)/100
+    topRow=df.nlargest(round(percentuale),['score'])
+    for idx in topRow.index:
+        df.at[idx,'topScore']=1
+    print(topRow)
+    return df
+    
 
