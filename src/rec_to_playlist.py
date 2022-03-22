@@ -10,17 +10,16 @@ def getListaRipetute():
     top_shortdf=pd.read_csv("Top_short.csv")
     top_mediumdf=pd.read_csv("Top_medium.csv")
     top_longdf=pd.read_csv("Top_long.csv")
-    top_shortdf=top_shortdf['id']
-    top_mediumdf=top_mediumdf['id']
-    top_longdf=top_longdf['id']
-    top_df=pd.concat([top_shortdf,top_mediumdf,top_longdf], ignore_index=True)
-    top_df.drop_duplicates('id',keep='first', inplace=True)
-
+    top_df=pd.concat([top_shortdf,top_mediumdf,top_longdf])
+    top_df.drop_duplicates(subset=['id'], inplace=True)
+    print(top_df)
     lista2=top_df['id'].tolist()
     return list(set(lista1 + lista2))
 
 def cleanDuplicates(df, lista):
-    df.drop(df[df.id not in lista].index, inplace=True)
+    for idx in df.index:
+        if df.at[idx, 'id'] in lista:
+            df.drop(idx, inplace=True)
     return df
 
 def getBestSongs():
@@ -30,13 +29,14 @@ def getBestSongs():
     #scarta topArtista=0
     recdf = recdf[recdf.TopArtista == 1]
     
-    recdf.sort_values(['score', 'p_classificazione'], descending=[True, True], inplace=True)
-    recdf.reset_index(drop=True, inplace=True)
+    recdf.sort_values(['score', 'p_classificazione'], ascending=[True, True], inplace=True)
     migliori=[]
-    for idx in recdf.index:
-        if(not idx<30): break
+    i=0
+    for idx in reversed(recdf.index):
+        if(not i<30): break
         else:
             migliori.append(recdf.at[idx,'id'])
+        i+=1
     return migliori
 
 
