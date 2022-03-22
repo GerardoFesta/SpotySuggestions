@@ -202,6 +202,9 @@ def dataSongsClean(df):
     df['genres']=df['genres'].apply(lambda x:ast.literal_eval(x))
     df = df[df.popularity != 0]
     df['album_release_date']=df['album_release_date'].astype('str')
+    nan_value = float("NaN")
+    df['id'].replace("", nan_value, inplace=True)
+    df.dropna(subset = ["id"], inplace=True)
     return df
 
 

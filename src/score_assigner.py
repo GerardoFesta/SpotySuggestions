@@ -109,7 +109,6 @@ def dataPreparation():
 
     finaldf.to_csv("ProvaScore.csv", index=False)
 
-dataPreparation()
     
 
 
