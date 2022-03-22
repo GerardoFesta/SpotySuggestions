@@ -21,8 +21,8 @@ def getReadyCsv():
 
 
     top_shortdf=pd.read_csv("Top_short.csv")
-    top_mediumdf=pd.read_csv("Top_short.csv")
-    top_longdf=pd.read_csv("Top_short.csv")
+    top_mediumdf=pd.read_csv("Top_medium.csv")
+    top_longdf=pd.read_csv("Top_long.csv")
     colonne=["artist_id","artist_name"]
     top_shortdf=top_shortdf[colonne]
     top_mediumdf=top_mediumdf[colonne]
