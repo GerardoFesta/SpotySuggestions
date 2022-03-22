@@ -27,8 +27,10 @@ def getBestSongs():
     recdf=pd.read_csv("OutputR.csv")
     listaEsclusione=getListaRipetute()
     recdf=cleanDuplicates(recdf,listaEsclusione)
+    #scarta topArtista=0
+    recdf = recdf[recdf.TopArtista == 1]
     
-    recdf.sort_values(['p_regressione', 'p_classificazione'], descending=[True, True], inplace=True)
+    recdf.sort_values(['score', 'p_classificazione'], descending=[True, True], inplace=True)
     recdf.reset_index(drop=True, inplace=True)
     migliori=[]
     for idx in recdf.index:
