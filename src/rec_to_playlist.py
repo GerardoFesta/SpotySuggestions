@@ -8,8 +8,8 @@ def getListaRipetute():
     lista1=salvatedf['id'].tolist()
 
     top_shortdf=pd.read_csv("Top_short.csv")
-    top_mediumdf=pd.read_csv("Top_short.csv")
-    top_longdf=pd.read_csv("Top_short.csv")
+    top_mediumdf=pd.read_csv("Top_medium.csv")
+    top_longdf=pd.read_csv("Top_long.csv")
     top_shortdf=top_shortdf['id']
     top_mediumdf=top_mediumdf['id']
     top_longdf=top_longdf['id']
