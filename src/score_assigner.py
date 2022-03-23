@@ -46,8 +46,8 @@ def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
                 accumulatore+=random.uniform(0,0.2)
     genreScore+=accumulatore
                 
-    rfloat=random.uniform(-1,1)
-    score=moltProvenienza*(genreScore+popScore+artScore)+rfloat
+    rfloat=random.uniform(-0.5,0.5)
+    score=moltProvenienza*0.5+genreScore*1.2+popScore*0.25+artScore*1.5+rfloat
     
     return round(score,3)
 
