@@ -11,5 +11,3 @@ def getReadyRec():
     rec_df=assignSingleGenre(rec_df)
 
     rec_df.to_csv("READY_REC.csv", index=False)
-
-getReadyRec()
