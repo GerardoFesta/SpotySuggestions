@@ -177,7 +177,7 @@ def creaPunteggioArtisti(nameArtisti):
     return punteggio
 
 def getSingleGenre(song):
-    macro={"rock":0, "pop":0, "metal":0, "rap":0, "indie":0, "jazz":0, "electro":0, "house":0, "country":0, "techno":0, "classic":0, "blues":0, "r&b":0, "trap":0, "dance":0} 
+    macro={"rock":0, "pop":0, "metal":0, "rap":0, "indie":0, "jazz":0, "electro":0, "house":0, "country":0, "techno":0, "classic":0, "blues":0, "r&b":0, "trap":0, "dance":0, "hip hop":0, "edm":0, "binaural":0,"reggae":0,"punk":0,"lo-fi":0} 
     listaGeneri=song['genres']
     
 

@@ -12,7 +12,6 @@ def getListaRipetute():
     top_longdf=pd.read_csv("Top_long.csv")
     top_df=pd.concat([top_shortdf,top_mediumdf,top_longdf])
     top_df.drop_duplicates(subset=['id'], inplace=True)
-    print(top_df)
     lista2=top_df['id'].tolist()
     return list(set(lista1 + lista2))
 
@@ -26,10 +25,7 @@ def getBestSongs():
     recdf=pd.read_csv("OutputR.csv")
     listaEsclusione=getListaRipetute()
     recdf=cleanDuplicates(recdf,listaEsclusione)
-    #scarta topArtista=0
-    recdf = recdf[recdf.TopArtista == 1]
     
-    recdf.sort_values(['score', 'p_classificazione'], ascending=[True, True], inplace=True)
     migliori=[]
     i=0
     for idx in reversed(recdf.index):
@@ -44,7 +40,7 @@ def getBestSongs():
 
 def addBestToPlaylist(spotify):
     top=getBestSongs()
-
+    print(top)
     utente=spotify.me()
     playlist=spotify.user_playlist_create(utente['id'], "SpotySuggestion Playlist", public=True, collaborative=False, description='Nuovi consigli')
     spotify.user_playlist_add_tracks(utente['id'], playlist['id'], top, position=None)
