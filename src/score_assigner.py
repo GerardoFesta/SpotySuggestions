@@ -17,9 +17,9 @@ def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
     (ovvero popolarità, genere e artista di questa canzone) e le confronta con le caratteristiche 
     punteggiPop, punteggiGeneri, punteggiArtista
     :param moltProvenienza: moltiplicatore della provenienza della canzone(preferiti playlist ecc.)
-    :param punteggiPop: punteggio della popolarità della canzone
-    :param punteggiGeneri: punteggio del genere della canzone
-    :param punteggiArtista: punteggio assegnato in base alla posizione dell'artista nei preferiti
+    :param punteggiPop: dizionario dei punteggi per il campo popularity
+    :param punteggiGeneri: dizionario dei punteggi associati ai generi
+    :param punteggiArtista: dizionario associato ai punteggi degli artisti
     :param song: singola canzone passata come input
     :return round(score,3): score arrotondato
     '''
@@ -66,7 +66,7 @@ def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
     
 def dataPreparation():
     '''
-    La funzione crea un dataframe finale dove assegna ad ogni canzone uno score
+    La funzione salva il dataframe ProvaScore.csv nel quale assegna ad ogni canzone uno score
     indicando inoltre se l'artista della canzone è un top artista
     (sempre in base alle preferenze dell'utente) oppure no.
     '''

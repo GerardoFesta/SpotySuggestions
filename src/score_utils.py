@@ -84,9 +84,8 @@ def popolaritaFasce(listapop):
 
 def contaEsplicite(listaexplicit):
     '''
-    La funzione ritorna un dizionario(o lista) contenente in corrispondenza di ogni canzone
-    1 se la canzone è esplicita
-    0 altrimenti 
+    La funzione ritorna il numero di canzoni esplicite e il numero di canzoni non esplicite
+    nell'insieme di canzoni in input
 
     :param listaexplicit: lista contenente canzoni da verificare se sono esplicite
     :return listaexplicit.count(True),listaexplicit.count(False): lista dove in corrispondenza di ogni canzone abbiamo valore
@@ -153,7 +152,7 @@ def mediaAudioFeautures(l_danceability,l_energy,l_key,l_loudness,l_speechiness,l
 def creaPunteggioGenere(lista):
     '''
     La funzione restituisce un dizionario contenente il punteggio in base alle
-    occerrenze di quel "genere" 
+    occerrenze dei generi
 
     :param lista: lista di generi
     :return punteggio: un dizionario contenente il punteggio relativo ad ogni genere
@@ -179,7 +178,7 @@ def creaPunteggioGenere(lista):
 def creaPunteggioPopolarita(popolarita):
     '''
     La funzione restituisce un dizionario contenente il punteggio in base alle 
-    occorrenze di quella "popolarità"
+    occorrenze delle fasce di popolarità
 
     :param popolarita: lista di popolarità
     :return punteggio: un dizionario contenente il punteggio relativo alla popolarità
@@ -258,7 +257,7 @@ def getSingleGenre(song):
 
 def dataSongsClean(df):
     '''
-    La funzione pulisce il dataframe e restituisce il dataframe privo di impurità
+    La funzione pulisce il dataframe e restituisce il dataframe privo di impurità e leggibile per altre funzioni
 
     :param df: dataframe passato in input
     :return df: dataframe restituito privo di impurità
@@ -283,8 +282,8 @@ def dataSongsClean(df):
 
 def assignSingleGenre(fulldf):
     '''
-    La funzione assegna nella colonna genere contenuta in fulldf(dataframe) passato in input
-    un singolo genere al posto della lista di generi contenuti
+    La funzione assegna nella colonna genere contenuta in fulldf (DataFrame) passato in input
+    un singolo genere sulla base della lista genres associata alle canzoni
 
     :param fulldf: dataframe passato in input
     :return fulldf: dataframe con singolo genere nella colonna "genere"

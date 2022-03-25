@@ -34,8 +34,8 @@ def cleanDuplicates(df, lista):
 
 def getBestSongs():
     '''
-    Legge il file dato in output dal modello di ML, esclude le canzoni ripetute 
-    e selezione le migliori 30 canzoni che restituisce
+    Legge il file dato in output dal modello di ML (ordinato in ordine crescente di score ecc.), esclude le canzoni ripetute 
+    e restituisce le migliori 30 canzoni 
 
     :return migliori: lista contenente gli id delle migliori 30 canzoni
     '''
@@ -57,7 +57,7 @@ def getBestSongs():
 
 def addBestToPlaylist(spotify):
     '''
-    La funzione svolge l'operazione di aggiunta delle migliori 30 canzoni sopra citate,
+    La funzione svolge l'operazione di aggiunta delle migliori 30 canzoni sopra citate
     all'interno di una playlist in Spotify
     '''
     top=getBestSongs()

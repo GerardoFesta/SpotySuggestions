@@ -8,9 +8,9 @@ import pandas as pd
 #dataPreparation()
 def getReadyCsv():
     '''
-    La funzione restituisce un dataframe contenente tutte le canzoni (eccetto quelle raccomandate)
+    La funzione salva un dataframe nel file READY_ARTISTI_GENERI.csv contenente tutte le canzoni (eccetto quelle raccomandate)
     formattando il campo "lista di generi" in un solo genere e il campo "topArtista" avrà valore 
-    1  se l'artista di questa canzone rientra nel dizionario dict_artisti
+    1  se l'artista di questa canzone rientra tra gli artisti preferiti (o tra gli artisti che hanno prodotto una delle canzoni preferite)
     0 altrimenti
     '''
     fulldf=pd.read_csv("ProvaScore.csv")
