@@ -298,7 +298,7 @@ def assignSingleGenre(fulldf):
 def one_to_all_fav_artists(fulldf,dict_artisti):
     '''
     La funzione restituisce un dataframe contenete una nuova colonna
-    "TopArtista" dove in ogni riga contiene il valore
+    "like" dove in ogni riga contiene il valore
     1 se l'artista è uno dei preferiti dell'utente o se ha prodotto una delle canzoni preferite dall'utente
     0 altrimenti
 
@@ -309,7 +309,7 @@ def one_to_all_fav_artists(fulldf,dict_artisti):
     for idx in fulldf.index:
         artista=fulldf.loc[idx]['artist_name']
         if(not dict_artisti.get(artista)==None):
-            fulldf.at[idx, 'TopArtista']=1
+            fulldf.at[idx, 'like']=1
     return fulldf
 #Prende il 30% delle canzoni con punteggio più alto
 def topScoreRow(df):
