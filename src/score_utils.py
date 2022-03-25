@@ -299,7 +299,7 @@ def one_to_all_fav_artists(fulldf,dict_artisti):
     '''
     La funzione restituisce un dataframe contenete una nuova colonna
     "TopArtista" dove in ogni riga contiene il valore
-    1 se l'artista è uno dei preferiti dell'utente
+    1 se l'artista è uno dei preferiti dell'utente o se ha prodotto una delle canzoni preferite dall'utente
     0 altrimenti
 
     :param fulldf: dataframe passato in input
