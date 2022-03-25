@@ -3,7 +3,8 @@ import spotipy
 
 
 def getListaRipetute():
-    
+    '''
+    '''
     salvatedf=pd.read_csv("salvate.csv")
     lista1=salvatedf['id'].tolist()
 
@@ -16,12 +17,16 @@ def getListaRipetute():
     return list(set(lista1 + lista2))
 
 def cleanDuplicates(df, lista):
+    '''
+    '''
     for idx in df.index:
         if df.at[idx, 'id'] in lista:
             df.drop(idx, inplace=True)
     return df
 
 def getBestSongs():
+    '''
+    '''
     recdf=pd.read_csv("OutputR.csv")
     listaEsclusione=getListaRipetute()
     recdf=cleanDuplicates(recdf,listaEsclusione)
@@ -39,6 +44,8 @@ def getBestSongs():
     
 
 def addBestToPlaylist(spotify):
+    '''
+    '''
     top=getBestSongs()
     print(top)
     utente=spotify.me()

@@ -1,7 +1,23 @@
 import pandas as pd
 
+"""
+    salva nei file Top_short.csv, Top_medium.csv, Top_long.csv le canzoni più ascoltate dall'utente nel breve, medio e lungo periodo
+    :param spotify: token autenticato Spotify
+    """
+
+
+
+
 
 def getAllSongsFromCall(spotify, chiamata):
+
+    '''
+    Restituisce l'intero insieme associato alla chiamata passata in input
+
+    :param spotify: token autenticato Spotify   
+    :param chiamata: lista di "items" ricevuta a partire da una chiamata alle API di Spotify 
+    return: dati  lista di items 
+    '''
 
     #Le canzoni sono strutturate all'interno di items
     risultati=chiamata
@@ -11,9 +27,16 @@ def getAllSongsFromCall(spotify, chiamata):
         dati.extend(risultati['items'])
     return dati
     
-#prende in input lista di songs non formattate e ritorna un df formattato
+   
 def songsToDf(spotify,songs):
-    
+    '''
+    La funzione crea un dataset il quale verrà restituito formattato correttamente
+
+     :param spotify: token autenticato Spotify
+     :param songs: lista di canzoni
+     return: prodotto pd.dataframe formattato correttamente
+    '''
+#prende in input lista di songs non formattate e ritorna un df formattato
     df = pd.DataFrame(songs)
     if 'track' in df.columns.tolist():
         df = df.drop('track', 1).assign(**df['track'].apply(pd.Series))
@@ -54,8 +77,17 @@ def songsToDf(spotify,songs):
     prodotto=df[select_columns]
     return prodotto
 
+
+   
 def getTracksFromPlaylists(spotify, chiamata):
 
+    '''
+    La funzione crea un dataset contenente le canzoni delle playlist,
+    formattare correttamente dato che restituisce i dati
+    :param spotify: token autenticato Spotify
+    :param chiamata: lista di "items" ricevuta a partire da una chiamata alle API di Spotify 
+    :return songToDf: dataframe formattato correttamente
+    '''
     playlists = chiamata
     tutte_playlist = playlists['items']
     dati=[]
@@ -70,9 +102,17 @@ def getTracksFromPlaylists(spotify, chiamata):
     
     return songsToDf(spotify,dati)
 
-
-def getAllArtistsDf(spotify, chiamata):
     
+def getAllArtistsDf(spotify, chiamata):
+    '''
+    La funzione restituisce un dataframe contenente gli artisti più ascoltati dall'utente
+    formattandoli nel dataframe con l'intestazione delle colonne come da return
+
+    :param spotify: token autenticato Spotify   
+    :param chiamata: lista di "items" ricevuta a partire da una chiamata alle API di Spotify 
+    :return df[["id","uri","type", "name", "genres"]]: dataframe formattato avente colonne "id","uri","type", "name", "genres"
+    contenente le informazioni relative agli artisti più ascoltati
+    '''
     risultati = chiamata
     #print(risultati)
     #risultati = risultati["artists"]
@@ -84,8 +124,14 @@ def getAllArtistsDf(spotify, chiamata):
     return df[["id","uri","type", "name", "genres"]]
 
 
+ 
 def getRecommendations(spotify, songs):
-
+    '''
+    Restituisce 20 canzoni per ogni canzone passata in input
+    :param spotify: token autenticato Spotify
+    :param songs: lista di canzoni
+    :return songToDf: dataframe formattato correttamente
+    '''
     dati=[]
     for song in songs:
         rec = spotify.recommendations(seed_tracks=[song])

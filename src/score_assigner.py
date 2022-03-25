@@ -12,6 +12,17 @@ from score_utils import creaPunteggioArtisti, popolaritaFasce, creaPunteggioPopo
 
 
 def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
+    '''
+    La funzione assegna uno score al parametro song in base al contenuto di song
+    (ovvero popolarità, genere e artista di questa canzone) e le confronta con le caratteristiche 
+    punteggiPop, punteggiGeneri, punteggiArtista
+    :param moltProvenienza: moltiplicatore della provenienza della canzone(preferiti playlist ecc.)
+    :param punteggiPop: punteggio della popolarità della canzone
+    :param punteggiGeneri: punteggio del genere della canzone
+    :param punteggiArtista: punteggio assegnato in base alla posizione dell'artista nei preferiti
+    :param song: singola canzone passata come input
+    :return round(score,3): score arrotondato
+    '''
     score=1
     pop=song['popularity']
     if(pop<=20):
@@ -54,6 +65,11 @@ def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
 
     
 def dataPreparation():
+    '''
+    La funzione crea un dataframe finale dove assegna ad ogni canzone uno score
+    indicando inoltre se l'artista della canzone è un top artista
+    (sempre in base alle preferenze dell'utente) oppure no.
+    '''
     PLAYLIST_X=1.2
     SALVATE_X=1.4
     PREFERITE_X=1.5

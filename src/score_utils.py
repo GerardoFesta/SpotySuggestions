@@ -20,6 +20,14 @@ SC_ARTIST7=1.1
 
 #Nella chiamata passare a tuttigeneri tuttigeneri=dati['genres'].tolist()
 def generiPreferiti(tuttigeneri):
+
+    '''
+    La funzione restituisce un dizionario contenente le occorrenze dei generi
+    delle canzoni in input
+
+    :param tuttigeneri: lista contente tutti i generi delle canzoni
+    :return generi: dizionario contenente le occorrenze
+    '''
     generi={}
     for listaGeneri in tuttigeneri:
         for genere in listaGeneri:
@@ -31,6 +39,12 @@ def generiPreferiti(tuttigeneri):
 
 #Nella chiamata passare a listapop listapop=dati['popularity'].tolist()
 def popolaritaMedia(listapop):
+    '''
+    La funzione restituisce la popolarità media delle canzoni passate in input
+
+    :param listapop: lista contenente la popolarità delle canzoni passate
+    :return round(tot/i): viene ritornata la media delle popolarità passate in input
+    '''
     tot=0
     i=0
     for pop in listapop:
@@ -40,6 +54,14 @@ def popolaritaMedia(listapop):
     return round(tot/i)
 
 def popolaritaFasce(listapop):
+    '''
+    La funzione restituisce un dizionario contenente le occorrenze delle fasce
+    di popolarità, stabilito all'interno della funzione, della lista di popolarità
+    delle canzoni passate in input
+
+    :param listapop: lista contenente la popolarità delle canzoni passate
+    :return dict: dizionario contenente le occorrenze delle fasce di popolarità
+    '''
     dict={'1-20':0,'21-40':0,'41-60':0,'61-80':0,'81-100':0}
     for pop in listapop:
         if(pop>=1 and pop<=20):
@@ -61,12 +83,28 @@ def popolaritaFasce(listapop):
 
 
 def contaEsplicite(listaexplicit):
+    '''
+    La funzione ritorna un dizionario(o lista) contenente in corrispondenza di ogni canzone
+    1 se la canzone è esplicita
+    0 altrimenti 
+
+    :param listaexplicit: lista contenente canzoni da verificare se sono esplicite
+    :return listaexplicit.count(True),listaexplicit.count(False): lista dove in corrispondenza di ogni canzone abbiamo valore
+    1 se la canzone è esplicita
+    0 altrimenti
+    '''
     return listaexplicit.count(True),listaexplicit.count(False)
     
 
 #Applica lambda per prendere solo anno prima di richiamare
 #df['album_release_date']=df['album_release_date'].apply(lambda x : x[0:4])
 def raccoltaAnni(listaAnni):
+    '''
+    La funzione calcola un dizionario contenente le occorrenze degli anni 
+    delle canzoni passate come input
+
+    :param listaAnni: lista contenente gli anni di uscita delle canzoni
+    '''
     anni={}
     for anno in listaAnni:
         if(anni.get(anno)==None):
@@ -113,6 +151,13 @@ def mediaAudioFeautures(l_danceability,l_energy,l_key,l_loudness,l_speechiness,l
     return dict
 '''
 def creaPunteggioGenere(lista):
+    '''
+    La funzione restituisce un dizionario contenente il punteggio in base alle
+    occerrenze di quel "genere" 
+
+    :param lista: lista di generi
+    :return punteggio: un dizionario contenente il punteggio relativo ad ogni genere
+    '''
     punteggio={}
     generiFinali=(sorted(lista.items(),key=lambda x: x[1],reverse=True))
     for genere in generiFinali:
@@ -132,6 +177,13 @@ def creaPunteggioGenere(lista):
 
 
 def creaPunteggioPopolarita(popolarita):
+    '''
+    La funzione restituisce un dizionario contenente il punteggio in base alle 
+    occorrenze di quella "popolarità"
+
+    :param popolarita: lista di popolarità
+    :return punteggio: un dizionario contenente il punteggio relativo alla popolarità
+    '''
     punteggio={}
     popolaritaFinale=(sorted(popolarita.items(),key=lambda x:x[1],reverse=True))
     for popolarita in popolaritaFinale:
@@ -149,6 +201,13 @@ def creaPunteggioPopolarita(popolarita):
     return punteggio
 
 def creaPunteggioArtisti(nameArtisti):
+    '''
+    La funzione restituisce il punteggio in base alla posizione
+    dell'artista all'interno della lista(nameArtisti)
+
+    :param nameArtisti: lista di artista
+    :return punteggio: un dizionario contenente il punteggio relativo agli artisti
+    '''
     punteggio={}
     i=0
     for name in nameArtisti:
@@ -177,6 +236,13 @@ def creaPunteggioArtisti(nameArtisti):
     return punteggio
 
 def getSingleGenre(song):
+    '''
+    La funzione restituisce un singolo genere dalla lista di generi 
+    contenuti nella canzone passata in input
+
+    :param song: canzone passata in input
+    :return maxvalue: genere con più occorrenze contenuto all'interno della lista dei generi di song
+    '''
     macro={"rock":0, "pop":0, "metal":0, "rap":0, "indie":0, "jazz":0, "electro":0, "house":0, "country":0, "techno":0, "classic":0, "blues":0, "r&b":0, "trap":0, "dance":0, "hip hop":0, "edm":0, "binaural":0,"reggae":0,"punk":0,"lo-fi":0} 
     listaGeneri=song['genres']
     
@@ -191,6 +257,12 @@ def getSingleGenre(song):
 
 
 def dataSongsClean(df):
+    '''
+    La funzione pulisce il dataframe e restituisce il dataframe privo di impurità
+
+    :param df: dataframe passato in input
+    :return df: dataframe restituito privo di impurità
+    '''
     df = df[df.genres != '[]']
     df = df[df.energy != np.NaN]
     df = df[df.energy != ""]
@@ -210,6 +282,13 @@ def dataSongsClean(df):
 
 
 def assignSingleGenre(fulldf):
+    '''
+    La funzione assegna nella colonna genere contenuta in fulldf(dataframe) passato in input
+    un singolo genere al posto della lista di generi contenuti
+
+    :param fulldf: dataframe passato in input
+    :return fulldf: dataframe con singolo genere nella colonna "genere"
+    '''
     fulldf["genere"]=""
     for idx in fulldf.index:
         genere=getSingleGenre(fulldf.loc[idx])
@@ -218,6 +297,16 @@ def assignSingleGenre(fulldf):
     return fulldf
 
 def one_to_all_fav_artists(fulldf,dict_artisti):
+    '''
+    La funzione restituisce un dataframe contenete una nuova colonna
+    "TopArtista" dove in ogni riga contiene il valore
+    1 se l'artista è uno dei preferiti dell'utente
+    0 altrimenti
+
+    :param fulldf: dataframe passato in input
+    :dict_artisti: dizionario contenente gli artisti preferiti
+    :return fulldf: dataframe contenente i nuovi dati
+    '''
     for idx in fulldf.index:
         artista=fulldf.loc[idx]['artist_name']
         if(not dict_artisti.get(artista)==None):
@@ -225,6 +314,16 @@ def one_to_all_fav_artists(fulldf,dict_artisti):
     return fulldf
 #Prende il 30% delle canzoni con punteggio più alto
 def topScoreRow(df):
+    '''
+    La funzione restituisce un dataframe contenente in testa
+    le migliori canzoni(nello specifico caso della funzione 30%)
+    aggiungendo una nuova colonna al dataframe 'topScore' la quale avrà valore
+    1 se rientra nella top 30%
+    0 altrimenti
+
+    :param df: dataframe passato in input
+    :return df: nuovo dataframe contenente in testa le top canzoni e la nuova colonna 'topScore'
+    '''
     df['topScore']=0
     count=len(df.index)
     percentuale=(count*30)/100
