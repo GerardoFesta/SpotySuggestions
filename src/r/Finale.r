@@ -142,3 +142,99 @@ ris_reg<-rbind(ris_reg,cbind(RMSE=RMSE(pred,test$score),MAE=MAE(pred,test$score)
 rownames(ris_reg)<-c("Regression Tree","Linear Regression","Random Forest")
 
 ris_reg
+
+# CLASSIFICAZIONE
+
+class_tree<-rpart(like ~ danceability+energy+key+loudness+speechiness+acousticness+instrumentalness+liveness+valence+tempo+duration_ms
+           +explicit+diffy+genere,
+           data    = train, 
+           method  = "class")
+
+pred<-predict(class_tree, test,type="class")
+cm<-confusionMatrix(pred, test$like, positive="Yes")
+ris_class<-cbind(Accuracy=cm$overall["Accuracy"],Sensitivity=cm$byClass["Sensitivity"]
+                 ,Specificity=cm$byClass["Specificity"], BalAccuracy=cm$byClass["Balanced Accuracy"])
+
+
+
+#plot albero
+rpart.plot(class_tree)
+plotcp(class_tree) #grafico errore di cross-validazione
+vip(class_tree) 
+
+
+upp<-min(class_tree$cp[,4])+class_tree$cp[which.min(class_tree$cp[,3]),5]
+best<-max(class_tree$cp[class_tree$cp[,4]<=upp,1])
+nf<-prune(class_tree, cp=best) #tagliare albero (variare cp in base regola one standard error)
+rpart.plot(nf) #plot nuovo albero
+
+
+rf_class<-randomForest(like ~ danceability+energy+key+loudness+speechiness+acousticness+instrumentalness+liveness+valence+tempo+duration_ms
+                 +explicit+diffy+genere,
+                 data    = train)
+vip(rf_class)
+
+pred<-predict(rf_class, test,type="class")
+cm<-confusionMatrix(pred, test$like, positive="Yes")
+
+ris_class<-rbind(ris_class,cbind(Accuracy=cm$overall["Accuracy"],Sensitivity=cm$byClass["Sensitivity"]
+                 ,Specificity=cm$byClass["Specificity"], BalAccuracy=cm$byClass["Balanced Accuracy"]))
+
+
+# imposto 10-Fold cross Validation
+set2_10FCV <- trainControl(method = "cv", number = 10, 
+                           savePredictions = "final",
+                           classProbs = TRUE)
+
+
+kfcv_knn <- train(like ~ danceability+energy+key+loudness+speechiness+acousticness+instrumentalness+liveness+valence+tempo+duration_ms
+                  , data = train
+                  , method = "knn",
+                  trControl = set2_10FCV,
+                  preProcess = c("center", "scale"),
+                  tuneLength = 30)
+
+
+pred<-predict(kfcv_knn, test, type="raw")
+cm<-confusionMatrix(pred, test$like, positive="Yes")
+ris_class<-rbind(ris_class,cbind(Accuracy=cm$overall["Accuracy"],Sensitivity=cm$byClass["Sensitivity"]
+                                 ,Specificity=cm$byClass["Specificity"], BalAccuracy=cm$byClass["Balanced Accuracy"]))
+
+rownames(ris_class)<-c("Classification Tree","Random Forest","Knn")
+
+ris_class
+
+###############
+
+
+nuovi<-read.csv("READY_REC.csv")
+date<-as.integer(strtrim(nuovi$album_release_date,4))
+nuovi$diffy<-2022-date
+
+nuovi$genere<-factor(nuovi$genere,
+                  levels=c( "rock", "pop", "metal", "rap", "indie", "jazz", "electro", "house", "country",
+                            "techno", "classic", "blues", "r&b", "trap", "dance", "hip hop", "edm", "binaural","reggae","punk","lo-fi"))
+
+
+pred_regt<-predict(reg_tree,nuovi)
+pred_rf<-predict(rf,nuovi)
+pred_lm<-predict(reg_lm,nuovi)
+
+pred_classt<-predict(class_tree, nuovi, type="prob")[,2]
+pred_rfclass<-predict(rf_class, nuovi, type = "prob")[,2]
+pred_knn<-predict(kfcv_knn,nuovi, type="prob")[,2]
+
+pred_new<-cbind(score_regTree=pred_regt, score_randFor=pred_rf, score_regLin=pred_lm, probY_classTree=pred_classt,
+                probY_randFor=pred_rfclass,probY_knn=pred_knn)
+
+ris_reg
+ris_class
+nuovi<-cbind(nuovi,pred_new)
+nuovi<-nuovi[
+  order( pred_new[,"probY_randFor"], pred_new[,"score_randFor"],pred_new[,"probY_classTree"], pred_new[,"score_regLin"],
+         pred_new[,"probY_knn"], pred_new[,"score_regTree"] ),
+]
+
+#INVERTIRE ORDINE
+
+write.table(nuovi,"OutputR.csv", sep=",", col.names=NA, qmethod = "double")
