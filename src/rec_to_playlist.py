@@ -3,7 +3,12 @@ import spotipy
 
 
 def getListaRipetute():
-    
+    '''
+    La funzione ritorna una lista composta da una concatenazione
+    di più dataframe ovvero, canzoni salvate, top_short, medium e long.
+    Ovviamente andando a droppare i duplicati che si ripetono all'interno dei dataframe
+    :return list(set(lista1 + lista2)): lista di canzoni non ripetute prese dai vari dataframe sopra detti
+    '''
     salvatedf=pd.read_csv("salvate.csv")
     lista1=salvatedf['id'].tolist()
 
@@ -16,12 +21,24 @@ def getListaRipetute():
     return list(set(lista1 + lista2))
 
 def cleanDuplicates(df, lista):
+    '''
+    La funzione restituisce un dataframe privo *delle canzoni contenute nella lista passata in input
+    :param df: dataframe passato in input
+    :param lista: lista di canzoni
+    :return df: nuovo dataframe privo di impurita*
+    '''
     for idx in df.index:
         if df.at[idx, 'id'] in lista:
             df.drop(idx, inplace=True)
     return df
 
 def getBestSongs():
+    '''
+    Legge il file dato in output dal modello di ML (ordinato in ordine crescente di score ecc.), esclude le canzoni ripetute 
+    e restituisce le migliori 30 canzoni 
+
+    :return migliori: lista contenente gli id delle migliori 30 canzoni
+    '''
     recdf=pd.read_csv("OutputR.csv")
     listaEsclusione=getListaRipetute()
     recdf=cleanDuplicates(recdf,listaEsclusione)
@@ -39,6 +56,10 @@ def getBestSongs():
     
 
 def addBestToPlaylist(spotify):
+    '''
+    La funzione svolge l'operazione di aggiunta delle migliori 30 canzoni sopra citate
+    all'interno di una playlist in Spotify
+    '''
     top=getBestSongs()
     print(top)
     utente=spotify.me()

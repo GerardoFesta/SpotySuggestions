@@ -6,7 +6,7 @@ from rec_to_playlist import addBestToPlaylist
 import os
 from dotenv import load_dotenv
 from score_assigner import dataPreparation
-from per_pred_artista import getReadyCsv
+from post_score_editor import getReadyCsv
 from recom_preparation import getReadyRec
 
 
@@ -47,6 +47,7 @@ def main():
     dataPreparation()
     getReadyCsv()
     getReadyRec()
+    
     print("Esecuzione script R. . .")
     runScripts()
     

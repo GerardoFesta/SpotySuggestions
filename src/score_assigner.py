@@ -12,6 +12,17 @@ from score_utils import creaPunteggioArtisti, popolaritaFasce, creaPunteggioPopo
 
 
 def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
+    '''
+    La funzione assegna uno score al parametro song in base al contenuto di song
+    (ovvero popolarità, genere e artista di questa canzone) e le confronta con le caratteristiche 
+    punteggiPop, punteggiGeneri, punteggiArtista
+    :param moltProvenienza: moltiplicatore della provenienza della canzone(preferiti playlist ecc.)
+    :param punteggiPop: dizionario dei punteggi per il campo popularity
+    :param punteggiGeneri: dizionario dei punteggi associati ai generi
+    :param punteggiArtista: dizionario associato ai punteggi degli artisti
+    :param song: singola canzone passata come input
+    :return round(score,3): score arrotondato
+    '''
     score=1
     pop=song['popularity']
     if(pop<=20):
@@ -54,6 +65,11 @@ def evalScore(moltProvenienza,punteggiPop,punteggiGeneri,punteggiArtista,song):
 
     
 def dataPreparation():
+    '''
+    La funzione salva il dataframe CanzoniConScore.csv nel quale assegna ad ogni canzone uno score
+    indicando inoltre se l'artista della canzone è un top artista
+    (sempre in base alle preferenze dell'utente) oppure no.
+    '''
     PLAYLIST_X=1.2
     SALVATE_X=1.4
     PREFERITE_X=1.5
@@ -100,14 +116,14 @@ def dataPreparation():
     finaldf=pd.concat([playlistdf,preferitedf,salvatedf], ignore_index=True)
     finaldf=finaldf.sort_values('score', ascending=False).drop_duplicates(subset=['id'], inplace=False)
 
-    finaldf['TopArtista']=0
+    finaldf['like']=0
     for idx in finaldf.index:
         artista=finaldf.loc[idx]['artist_name']
         if(not punteggiArtista.get(artista)==None):
-            finaldf.at[idx, 'TopArtista']=1
+            finaldf.at[idx, 'like']=1
 
 
-    finaldf.to_csv("ProvaScore.csv", index=False)
+    finaldf.to_csv("CanzoniConScore.csv", index=False)
 
     
 
