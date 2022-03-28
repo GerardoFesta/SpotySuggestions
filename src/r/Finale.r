@@ -78,15 +78,16 @@ reg_tree<-rpart(score ~ danceability+energy+key+loudness+speechiness+acousticnes
 
 
 #tagliare albero
-upp<-min(reg_tree$cp[,4])+reg_tree$cp[which.min(reg_tree$cp[,3]),5]
-best<-max(reg_tree$cp[reg_tree$cp[,4]<=upp,1])
-nf<-prune(reg_tree, cp=best) #tagliare albero (variare cp in base regola one standard error)
-rpart.plot(nf) #albero tagliato
+upp_reg<-min(reg_tree$cp[,4])+reg_tree$cp[which.min(reg_tree$cp[,4]),5]
+best_reg<-max(reg_tree$cp[reg_tree$cp[,4]<=upp_reg,1])
+nf_reg<-prune(reg_tree, cp=best_reg) #tagliare albero (variare cp in base regola one standard error)
+rpart.plot(nf_reg) #albero tagliato con std error
+#taglio albero per min error
+nf_min_reg<-prune(reg_tree, cp=reg_tree$cptable[which.min(reg_tree$cptable[,"xerror"]),"CP"])
+rpart.plot(nf_min_reg)
 
 
-
-
-pred<-predict(reg_tree,test) # se vuoi utilizzare albero tagliato sostituisci reg_tree con nf
+pred<-predict(nf_min_reg,test)
 MPE<-100*mean((test$score-pred)/test$score) #mean percentage error
 MAPE<-100*mean(abs(pred-test$score)/test$score) #mean absolute percentage error
 
@@ -150,12 +151,6 @@ class_tree<-rpart(like ~ danceability+energy+key+loudness+speechiness+acousticne
            data    = train, 
            method  = "class")
 
-pred<-predict(class_tree, test,type="class")
-cm<-confusionMatrix(pred, test$like, positive="Yes")
-ris_class<-cbind(Accuracy=cm$overall["Accuracy"],Sensitivity=cm$byClass["Sensitivity"]
-                 ,Specificity=cm$byClass["Specificity"], BalAccuracy=cm$byClass["Balanced Accuracy"])
-
-
 
 #plot albero
 rpart.plot(class_tree)
@@ -163,12 +158,24 @@ plotcp(class_tree) #grafico errore di cross-validazione
 vip(class_tree) 
 
 
-upp<-min(class_tree$cp[,4])+class_tree$cp[which.min(class_tree$cp[,3]),5]
-best<-max(class_tree$cp[class_tree$cp[,4]<=upp,1])
-nf<-prune(class_tree, cp=best) #tagliare albero (variare cp in base regola one standard error)
-rpart.plot(nf) #plot nuovo albero
+upp_class<-min(class_tree$cp[,4])+class_tree$cp[which.min(class_tree$cp[,4]),5]
+best_class<-max(class_tree$cp[class_tree$cp[,4]<=upp_class,1])
+nf_class<-prune(class_tree, cp=best_class) #tagliare albero (variare cp in base regola one standard error)
+rpart.plot(nf_class) #plot nuovo albero con 1std error
+
+#taglio albero per min error
+nf_min_class<-prune(class_tree, cp=class_tree$cptable[which.min(class_tree$cptable[,"xerror"]),"CP"])
+
+rpart.plot(nf_min_class)
+
+pred<-predict(nf_min_class, test,type="class")
+cm<-confusionMatrix(pred, test$like, positive="Yes")
+ris_class<-cbind(Accuracy=cm$overall["Accuracy"],Sensitivity=cm$byClass["Sensitivity"]
+                 ,Specificity=cm$byClass["Specificity"], BalAccuracy=cm$byClass["Balanced Accuracy"])
 
 
+
+#RANDOM FOREST
 rf_class<-randomForest(like ~ danceability+energy+key+loudness+speechiness+acousticness+instrumentalness+liveness+valence+tempo+duration_ms
                  +explicit+diffy+genere,
                  data    = train)
@@ -216,19 +223,18 @@ nuovi$genere<-factor(nuovi$genere,
                             "techno", "classic", "blues", "r&b", "trap", "dance", "hip hop", "edm", "binaural","reggae","punk","lo-fi"))
 
 
-pred_regt<-predict(reg_tree,nuovi)
+pred_regt<-predict(nf_min_reg,nuovi)
 pred_rf<-predict(rf,nuovi)
 pred_lm<-predict(reg_lm,nuovi)
 
-pred_classt<-predict(class_tree, nuovi, type="prob")[,2]
+pred_classt<-predict(nf_min_class, nuovi, type="prob")[,2]
 pred_rfclass<-predict(rf_class, nuovi, type = "prob")[,2]
 pred_knn<-predict(kfcv_knn,nuovi, type="prob")[,2]
 
 pred_new<-cbind(score_regTree=pred_regt, score_randFor=pred_rf, score_regLin=pred_lm, probY_classTree=pred_classt,
                 probY_randFor=pred_rfclass,probY_knn=pred_knn)
 
-ris_reg
-ris_class
+
 nuovi<-cbind(nuovi,pred_new)
 nuovi<-nuovi[
   order( pred_new[,"probY_randFor"], pred_new[,"score_randFor"],pred_new[,"probY_classTree"], pred_new[,"score_regLin"],
